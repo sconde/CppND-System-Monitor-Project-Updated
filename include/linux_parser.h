@@ -6,6 +6,12 @@
 #include <string>
 
 namespace LinuxParser {
+
+long ReadProcMemInfo(const std::string &key);
+long ReadProcPIDStatus(const int &pid, const std::string &key);
+
+int ClkTPS(void);
+
 // Paths
 const std::string kProcDirectory{"/proc/"};
 const std::string kCmdlineFilename{"/cmdline"};
@@ -27,6 +33,7 @@ int RunningProcesses();
 std::string OperatingSystem();
 std::string Kernel();
 
+
 // CPU
 enum CPUStates {
   kUser_ = 0,
@@ -38,7 +45,8 @@ enum CPUStates {
   kSoftIRQ_,
   kSteal_,
   kGuest_,
-  kGuestNice_
+  kGuestNice_, 
+  kEndCPUStates_
 };
 std::vector<std::string> CpuUtilization();
 long Jiffies();
