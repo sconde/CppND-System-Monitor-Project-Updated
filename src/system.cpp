@@ -13,23 +13,21 @@
 using std::set;
 using std::size_t;
 using std::string;
-using std::vector;
 
 // Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
 // Return a container composed of the system's processes
-vector<Process>& System::Processes() {
+std::vector<Process>& System::Processes() {
   processes_.clear();
 
   auto pids = LinuxParser::Pids();
   for (const int& pidint : pids) {
     Process p(pidint);
-    if (p.UpdateInfo()) 
-      processes_.push_back(p);
+    // no root processes
+    if (p.User() != "root" ) processes_.push_back(p);
   }
 
-  sort(processes_.begin(), processes_.end());
   return processes_;
 }
 
