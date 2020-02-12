@@ -25,7 +25,7 @@ std::vector<Process>& System::Processes() {
   for (const int& pidint : pids) {
     Process p(pidint);
     // no root processes
-    if (p.User() != "root" ) processes_.push_back(p);
+    if (p.User() != "root") processes_.push_back(p);
   }
 
   return processes_;
@@ -41,7 +41,7 @@ float System::MemoryUtilization() { return LinuxParser::MemoryUtilization(); }
 std::string System::OperatingSystem() { return LinuxParser::OperatingSystem(); }
 
 // Return the number of processes actively running on the system
-int System::RunningProcesses(){ return LinuxParser::RunningProcesses(); }
+int System::RunningProcesses() { return LinuxParser::RunningProcesses(); }
 
 // Return the total number of processes on the system
 int System::TotalProcesses() { return LinuxParser::TotalProcesses(); }
