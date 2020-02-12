@@ -10,7 +10,7 @@ namespace LinuxParser {
 long ReadProcMemInfo(const std::string &key);
 long ReadProcPIDStatus(const int &pid, const std::string &key);
 
-int ClkTPS(void);
+int ClkTPS();
 
 // Paths
 const std::string kProcDirectory{"/proc/"};
