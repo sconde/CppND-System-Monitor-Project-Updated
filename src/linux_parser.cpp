@@ -5,7 +5,7 @@
 
 #include "linux_parser.h"
 
-#define KB2MB  1024
+#define KB2MB 1024
 
 using std::ifstream;
 using std::istringstream;
@@ -89,8 +89,7 @@ std::vector<int> LinuxParser::Pids() {
 
 // Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() {
-  auto total_memory =
-      static_cast<float>(LinuxParser::ReadProcMem("MemTotal"));
+  auto total_memory = static_cast<float>(LinuxParser::ReadProcMem("MemTotal"));
   auto avail_memory =
       static_cast<float>(LinuxParser::ReadProcMem("MemAvailable"));
   return (total_memory - avail_memory) / total_memory;
@@ -289,8 +288,7 @@ long LinuxParser::ReadProcMem(const std::string &search_key) {
   return ReadProcInfo(filename, search_key);
 }
 
-long LinuxParser::ReadProcPID(const int &pid,
-                                    const std::string &search_key) {
+long LinuxParser::ReadProcPID(const int &pid, const std::string &search_key) {
   std::string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
   return ReadProcInfo(filename, search_key);
 }

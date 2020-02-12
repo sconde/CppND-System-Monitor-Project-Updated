@@ -22,14 +22,13 @@ int Process::Pid() { return pid_; }
 float Process::CpuUtilization() {
   auto result =
       ((float)LinuxParser::ActiveJiffies(pid_) / LinuxParser::ClkTPS());
-  return result / UpTime();
+
+  cpu_utilization_ = result / UpTime();
+  return this->cpu_utilization_;
 }
 
 // Return the command that generated this process
-string Process::Command() {
-  return LinuxParser::Command(pid_);
-  ;
-}
+string Process::Command() { return LinuxParser::Command(pid_); }
 
 // Return this process's memory utilization
 string Process::Ram() { return LinuxParser::Ram(pid_); }

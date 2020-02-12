@@ -8,24 +8,21 @@ It contains relevant attributes as shown below
 */
 class Process {
  public:
-  Process(const int pidint);  
-  bool UpdateInfo(void);      
-  int Pid();                  
-  std::string User();         
-  std::string Command();      
-  float CpuUtilization();     
-  std::string Ram();          
-  long int UpTime();          
-  bool operator<(Process const& a) const;  
+  Process(const int pidint);
+  bool UpdateInfo(void);
+  int Pid();
+  std::string User();
+  std::string Command();
+  float CpuUtilization();
+  std::string Ram();
+  long int UpTime();
+  bool operator<(Process const& a) const;
 
-  // TODO: Declare any necessary private members
+  // Declare any necessary private members
  private:
-  int pid_;                
-  std::string user_;       
-  std::string command_;    
-  float cpu_utilization_;  
-  std::string ram_;        
-  long int up_time_;       
+  const int pid_;  // process id is fixed and does not change ( does re-nice
+                   // change the process id? )
+  float cpu_utilization_;
 };
 
 #endif
