@@ -5,6 +5,8 @@
 
 #include "linux_parser.h"
 
+#define KB2MB  1024
+
 using std::ifstream;
 using std::istringstream;
 using std::stof;
@@ -14,7 +16,7 @@ using std::vector;
 
 int LinuxParser::ClkTPS() { return sysconf(_SC_CLK_TCK); }
 
-std::vector<std::string> Line2StrVector(string filename) {
+std::vector<std::string> StringToVector(string filename) {
   std::vector<string> result;
   std::string line, value;
   std::ifstream f_stream(filename);
@@ -88,9 +90,9 @@ std::vector<int> LinuxParser::Pids() {
 // Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() {
   auto total_memory =
-      static_cast<float>(LinuxParser::ReadProcMemInfo("MemTotal"));
+      static_cast<float>(LinuxParser::ReadProcMem("MemTotal"));
   auto avail_memory =
-      static_cast<float>(LinuxParser::ReadProcMemInfo("MemAvailable"));
+      static_cast<float>(LinuxParser::ReadProcMem("MemAvailable"));
   return (total_memory - avail_memory) / total_memory;
 }
 
@@ -116,7 +118,7 @@ long LinuxParser::Jiffies() { return (ActiveJiffies() - IdleJiffies()); }
 // Read and return the number of active jiffies for a PID
 long LinuxParser::ActiveJiffies(int pid) {
   std::string filename = kProcDirectory + to_string(pid) + kStatFilename;
-  std::vector<string> vstr = Line2StrVector(filename);
+  std::vector<string> vstr = StringToVector(filename);
 
   if (vstr.size() >= 21)
     return (stol(vstr[13]) + stol(vstr[14]) + stol(vstr[15]) + stol(vstr[16]));
@@ -151,19 +153,18 @@ long LinuxParser::IdleJiffies() {
 // Read and return CPU utilization
 std::vector<std::string> LinuxParser::CpuUtilization() {
   std::vector<string> result;
-  std::string line, temp;
+  std::string line, val;
 
   std::ifstream stream(kProcDirectory + kStatFilename);
   if (stream) {
     getline(stream, line);
 
     std::istringstream linestream(line);
-    linestream >> temp;
+    linestream >> val;
 
-    // I have adding kEndCPUStates_ to end of enum CPUStates in linux_parser.h
-    for (int ii = 0; ii < kEndCPUStates_; ii++) {
-      linestream >> temp;
-      result.push_back(temp);
+    for (int ii = 0; ii < CPUStates::kGuestNice_; ii++) {
+      linestream >> val;
+      result.push_back(val);
     }
   }
 
@@ -209,26 +210,24 @@ int LinuxParser::RunningProcesses() {
 
 // Read and return the command associated with a process
 std::string LinuxParser::Command(int pid) {
-  std::string line{"BADLINE"};
+  std::string line;
 
   std::ifstream filestream(kProcDirectory + std::to_string(pid) +
                            kCmdlineFilename);
 
   if (filestream) getline(filestream, line);
-
   return line;
 }
 
 // Read and return the memory used by a process
 std::string LinuxParser::Ram(int pid) {
-  const int kB2mB = 1024;
-  const auto mbMem = (ReadProcPIDStatus(pid, "VmRSS") / kB2mB);
+  const auto mbMem = (ReadProcPID(pid, "VmRSS") / KB2MB);
   return to_string(mbMem);
 }
 
 // Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) {
-  const auto uid = ReadProcPIDStatus(pid, "Uid");
+  const auto uid = ReadProcPID(pid, "Uid");
   return to_string(uid);
 }
 
@@ -258,7 +257,7 @@ std::string LinuxParser::User(int pid) {
 // Read and return the uptime of a process
 long LinuxParser::UpTime(int pid) {
   std::vector<string> result =
-      Line2StrVector(kProcDirectory + to_string(pid) + kStatFilename);
+      StringToVector(kProcDirectory + to_string(pid) + kStatFilename);
 
   if (result.size() >= 21) {
     const auto starttime = stol(result[21]);
@@ -285,12 +284,12 @@ long ReadProcInfo(const std::string filename, const std::string &search_key) {
   return 0;
 }
 
-long LinuxParser::ReadProcMemInfo(const std::string &search_key) {
+long LinuxParser::ReadProcMem(const std::string &search_key) {
   std::string filename = kProcDirectory + kMeminfoFilename;
   return ReadProcInfo(filename, search_key);
 }
 
-long LinuxParser::ReadProcPIDStatus(const int &pid,
+long LinuxParser::ReadProcPID(const int &pid,
                                     const std::string &search_key) {
   std::string filename = kProcDirectory + std::to_string(pid) + kStatusFilename;
   return ReadProcInfo(filename, search_key);

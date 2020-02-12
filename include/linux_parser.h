@@ -7,8 +7,8 @@
 
 namespace LinuxParser {
 
-long ReadProcMemInfo(const std::string &key);
-long ReadProcPIDStatus(const int &pid, const std::string &key);
+long ReadProcMem(const std::string &key);
+long ReadProcPID(const int &pid, const std::string &key);
 
 int ClkTPS();
 
@@ -44,8 +44,7 @@ enum CPUStates {
   kSoftIRQ_,
   kSteal_,
   kGuest_,
-  kGuestNice_,
-  kEndCPUStates_
+  kGuestNice_
 };
 std::vector<std::string> CpuUtilization();
 long Jiffies();
