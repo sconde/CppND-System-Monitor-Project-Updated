@@ -27,6 +27,7 @@ std::vector<std::string> StringToVector(string filename) {
     std::istringstream linestream(line);
     while (linestream >> value) result.push_back(value);
   }
+  f_stream.close();
 
   return result;
 }
@@ -51,19 +52,21 @@ std::string LinuxParser::OperatingSystem() {
       }
     }
   }
+  f_stream.close();
   return value;
 }
 
 //  An example of how to read data from the filesystem
 std::string LinuxParser::Kernel() {
-  std::string os, kernel;
+  std::string os, temp, kernel;
   std::string line;
   std::ifstream stream(kProcDirectory + kVersionFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> os >> kernel;
+    linestream >> os >> temp >> kernel;
   }
+  stream.close();
   return kernel;
 }
 
@@ -108,6 +111,7 @@ long LinuxParser::UpTime() {
     linestream >> str_value;
     value = stol(str_value);
   }
+  filestream.close();
   return value;
 }
 
@@ -125,7 +129,7 @@ long LinuxParser::ActiveJiffies(int pid) {
   return 0;
 }
 
-// TODO: Read and return the number of active jiffies for the system
+// Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() {
   const auto cpu_stats = LinuxParser::CpuUtilization();
   const auto user = stol(cpu_stats[LinuxParser::kUser_]);
@@ -167,6 +171,7 @@ std::vector<std::string> LinuxParser::CpuUtilization() {
     }
   }
 
+  stream.close();
   return result;
 }
 
@@ -185,6 +190,7 @@ int LinuxParser::TotalProcesses() {
       }
     }
   }
+  f_stream.close();
   return 0;
 }
 
@@ -204,6 +210,7 @@ int LinuxParser::RunningProcesses() {
     }
   }
 
+  f_stream.close();
   return 0;
 }
 
@@ -215,6 +222,8 @@ std::string LinuxParser::Command(int pid) {
                            kCmdlineFilename);
 
   if (filestream) getline(filestream, line);
+
+  filestream.close();
   return line;
 }
 
@@ -250,6 +259,7 @@ std::string LinuxParser::User(int pid) {
     }
   }
 
+  f_stream.close();
   return user;
 }
 
@@ -280,6 +290,7 @@ long ReadProcInfo(const std::string filename, const std::string &search_key) {
       }
     }
   }
+  f_stream.close();
   return 0;
 }
 
