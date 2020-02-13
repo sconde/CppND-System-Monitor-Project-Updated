@@ -4,8 +4,17 @@
 
 using std::string;
 
-// TODO: Complete this helper function
+// Complete this helper function
 // INPUT: Long int measuring seconds
 // OUTPUT: HH:MM:SS
-// REMOVE: [[maybe_unused]] once you define the function
-string Format::ElapsedTime(long seconds [[maybe_unused]]) { return string(); }
+string Format::ElapsedTime(long seconds ) {
+  const auto sec = (seconds % 60);
+  const auto hrs = (seconds / 3600);
+  const auto min = (seconds - hrs * 3600 - sec) / 60;
+
+  std::string str_hrs = (hrs < 10 ? ("0" + std::to_string(hrs)) : (std::to_string(hrs)));
+  std::string str_min = (min < 10 ? ("0" + std::to_string(min)) : (std::to_string(min)));
+  std::string str_sec = (sec < 10 ? ("0" + std::to_string(sec)) : (std::to_string(sec)));
+
+  return (str_hrs + ":" + str_min + ":" + str_sec);
+}
