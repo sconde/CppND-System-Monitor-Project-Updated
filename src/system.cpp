@@ -25,7 +25,8 @@ std::vector<Process>& System::Processes() {
   for (const int& pidint : pids) {
     Process p(pidint);
     // no root processes
-    if (p.User() != "root") processes_.push_back(p);
+    /*if (p.User() != "root") */
+    processes_.push_back(p);
   }
 
   return processes_;
